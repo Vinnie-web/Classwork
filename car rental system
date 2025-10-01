@@ -1,0 +1,128 @@
+
+ import java.io.Console;
+ public class LoginSystem {
+    private static final String USERNAME = "student";
+    private static final String PASSWORD = "java123";
+    // login function
+    public static boolean login() {
+        Console console = System.console();
+        if (console == null) {
+            System.out.println("No console found. Run in terminal for password masking.");
+            return false;
+        }
+        for (int i = 1; i <= 3; i++) {
+            System.out.println("Login Attempt " + i);
+            String username = console.readLine("Enter username: ");
+            char[] passArray = console.readPassword("Enter password: ");
+            String password = new String(passArray);
+            if (username.equals(USERNAME) && password.equals(PASSWORD)) {
+                System.out.println("Login successful. Welcome " + username);
+                return true;
+            } else {
+                System.out.println("Wrong username or password.");
+                if (i == 3) {
+                    System.out.println("Max attempts reached. Access denied.");
+                }
+            }
+        }
+        return false;
+    }
+}
+
+
+
+ public class Car {
+    private String id;
+    private String model;
+    private boolean available;
+    public Car(String id, String model) {
+        this.id = id;
+        this.model = model;
+        this.available = true;
+    }
+    public String getId() { return id; }
+    public String getModel() { return model; }
+    public boolean isAvailable() { return available; }
+    public void rentCar() { available = false; }
+    public void returnCar() { available = true; }
+    public String toString() {
+        return "Car[id=" + id + ", model=" + model + ", available=" + available + "]";
+    }
+ }
+ public class Customer {
+    private String id;
+    private String name;
+    public Customer(String id, String name) {
+        this.id = id;
+        this.name = name;
+    }
+    public String getId() { return id; }
+    public String getName() { return name; }
+    public String toString() {
+        return "Customer[id=" + id + ", name=" + name + "]";
+    }
+ }
+ import java.util.*;
+ public class RentalAgency {
+    private List<Car> cars = new ArrayList<>();
+    private List<Customer> customers = new ArrayList<>();
+    public void addCar(Car car) { cars.add(car); }
+    public void addCustomer(Customer c) { customers.add(c); }
+    public boolean rentCar(String carId, String custId) {
+        Car car = findCar(carId);
+        Customer c = findCustomer(custId);
+        if (car != null && car.isAvailable() && c != null) {
+            car.rentCar();
+            System.out.println(c.getName() + " rented " + car.getModel());
+            return true;
+        } else {
+            System.out.println("Rental failed.");
+            return false;
+        }
+    }
+    public void returnCar(String carId) {
+        Car car = findCar(carId);
+        if (car != null && !car.isAvailable()) {
+            car.returnCar();
+            System.out.println("Car " + car.getModel() + " returned.");
+        } else {
+            System.out.println("Return failed.");
+        }
+    }
+    private Car findCar(String id) {
+        for (Car car : cars) {
+            if (car.getId().equals(id)) return car;
+        }
+        return null;
+    }
+    private Customer findCustomer(String id) {
+        for (Customer c : customers) {
+            if (c.getId().equals(id)) return c;
+        }
+        return null;
+    }
+    public void listCars() {
+        System.out.println("Cars in Agency:");
+        for (Car car : cars) {
+            System.out.println(car);
+        }
+    }
+ }
+ public class Main {
+    public static void main(String[] args) {
+        if (!LoginSystem.login()) {
+            return;
+        }
+        RentalAgency agency = new RentalAgency();
+        agency.addCar(new Car("C1", "Toyota"));
+        agency.addCar(new Car("C2", "Honda"));
+        agency.addCar(new Car("C3", "Ford"));
+        agency.addCustomer(new Customer("U1", "Alice"));
+        agency.addCustomer(new Customer("U2", "Bob"));
+        agency.listCars();
+        agency.rentCar("C1", "U1");
+        agency.listCars();
+        agency.returnCar("C1");
+        agency.listCars();
+    }
+ }
